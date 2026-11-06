@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gizli Dosya · Günün Vakası</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0D0F12; --bg2:#14171c; --line:#252a31; --muted:#8a8f98; --text:#e8e4da;
+  --gold:#D4AF37; --gold-dim:#8f7626; --blood:#8B0000; --blood-2:#b01a1a;
+  --paper:#e9dfc6; --paper-2:#ddd0b0; --ink:#2a2318; --ink-soft:#5a4d37;
+  --serif:'Playfair Display', Georgia, 'Times New Roman', serif;
+  --mono:'Courier Prime', 'Courier New', monospace;
+  --sans:'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.55;
+  background-image:radial-gradient(ellipse at 50% -10%, #1c2028 0%, transparent 60%);}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.hidden{display:none!important}
+.view{min-height:100%}
+
+/* ---------- Ortak parçalar ---------- */
+.mono{font-family:var(--mono)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;
+  text-transform:uppercase;padding:3px 8px;border:1px solid var(--line);border-radius:3px;color:var(--muted)}
+.badge.lvl-kolay{color:#7fb48a;border-color:#2f4a36}
+.badge.lvl-orta{color:var(--gold);border-color:var(--gold-dim)}
+.badge.lvl-zor{color:#e07a4a;border-color:#6a3420}
+.badge.lvl-uzman{color:#e05656;border-color:#5c1a1a}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 20px;border-radius:4px;
+  font-weight:600;letter-spacing:.02em;transition:transform .08s, background .2s, opacity .2s}
+.btn:active{transform:scale(.98)}
+.btn-gold{background:var(--gold);color:#16130a}
+.btn-gold:hover{background:#e2bf4a}
+.btn-ghost{border:1px solid var(--line);color:var(--text)}
+.btn-ghost:hover{border-color:var(--gold-dim)}
+.btn-blood{background:var(--blood);color:#fff;box-shadow:0 0 0 1px #a31515 inset}
+.btn-blood:hover{background:#9e0b0b}
+.btn[disabled]{opacity:.4;pointer-events:none}
+
+.paper{background:var(--paper);color:var(--ink);border-radius:3px;position:relative;
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,.25), rgba(0,0,0,.03)),
+    repeating-linear-gradient(0deg, rgba(90,70,40,.035) 0 1px, transparent 1px 3px);
+  box-shadow:0 1px 0 rgba(255,255,255,.4) inset, 0 10px 24px rgba(0,0,0,.45);}
+.paper .eyebrow{color:var(--blood)}
+.typed{font-family:var(--mono);font-size:14px;line-height:1.6}
+
+.seal{display:inline-grid;place-items:center;width:62px;height:62px;border-radius:50%;
+  border:2px solid var(--blood);color:var(--blood);font-family:var(--mono);font-weight:700;font-size:10px;
+  letter-spacing:.12em;text-transform:uppercase;transform:rotate(-14deg);opacity:.85;text-align:center;line-height:1.1;
+  box-shadow:0 0 0 3px transparent, 0 0 0 4px rgba(139,0,0,.5) inset}
+.stamp{font-family:var(--mono);font-weight:700;color:var(--blood);border:3px solid var(--blood);padding:4px 12px;
+  text-transform:uppercase;letter-spacing:.15em;transform:rotate(-8deg);display:inline-block;opacity:.9}
+
+/* ---------- ANA SAYFA ---------- */
+.home{max-width:760px;margin:0 auto;padding:22px 18px 60px}
+.brand{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px}
+.brand h1{font-family:var(--serif);font-size:26px;letter-spacing:.04em}
+.brand h1 span{color:var(--gold)}
+.brand small{display:block;font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.12em}
+
+.daily{padding:24px 20px 22px;margin-bottom:34px;overflow:hidden}
+.daily .top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.daily h2{font-family:var(--serif);font-size:30px;line-height:1.15;margin:10px 0 8px;color:#1d170e}
+.daily .hook{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--ink-soft);margin-bottom:16px}
+.daily .meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.daily .meta .badge{border-color:rgba(42,35,24,.25);color:var(--ink-soft)}
+.daily .meta .badge.lvl-orta{color:#7a5c00;border-color:#b5932c}
+.daily .row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px}
+.countdown{font-family:var(--mono);font-size:13px;color:var(--ink-soft)}
+.countdown b{font-size:18px;color:var(--ink);letter-spacing:.06em}
+.daily .btn-gold{background:#1d170e;color:var(--gold)}
+.daily .ribbon{position:absolute;top:0;left:0;right:0;height:5px;background:var(--blood)}
+
+.section-h{display:flex;align-items:baseline;justify-content:space-between;margin:0 0 12px}
+.section-h h3{font-family:var(--serif);font-size:20px}
+.filters{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;padding:7px 13px;border:1px solid var(--line);border-radius:20px;font-size:13px;color:var(--muted)}
+.chip.on{border-color:var(--gold);color:var(--gold);background:rgba(212,175,55,.07)}
+.archive{display:grid;gap:10px}
+.acard{display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--line);border-radius:6px;background:var(--bg2);text-align:left;width:100%}
+.acard:hover{border-color:#3a3f47}
+.acard .no{font-family:var(--mono);color:var(--gold);font-size:13px;min-width:38px}
+.acard .t{flex:1;min-width:0}
+.acard .t b{display:block;font-family:var(--serif);font-size:16px;font-weight:700}
+.acard .t span{font-size:12px;color:var(--muted)}
+.acard.locked{opacity:.5;cursor:default}
+.lock{font-family:var(--mono);font-size:11px;color:var(--muted)}
+
+/* ---------- VAKA MASASI ---------- */
+.case{position:fixed;inset:0;display:flex;flex-direction:column;background:var(--bg)}
+.case-head{padding:12px 16px 10px;border-bottom:1px solid var(--line);background:#0f1216}
+.case-head .r1{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.icon-btn{width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--line);border-radius:6px;color:var(--muted)}
+.case-head h2{font-family:var(--serif);font-size:19px;line-height:1.2;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stats{display:flex;gap:8px}
+.stat{font-family:var(--mono);font-size:12px;padding:5px 9px;border:1px solid var(--line);border-radius:4px;color:var(--text)}
+.stat i{font-style:normal;color:var(--gold);margin-right:4px}
+
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--line);background:#0f1216}
+.tab{padding:11px 4px 10px;font-size:12px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px;
+  border-bottom:2px solid transparent;transition:color .2s,border-color .2s}
+.tab svg{width:19px;height:19px}
+.tab.on{color:var(--gold);border-bottom-color:var(--gold)}
+
+.panels{flex:1;min-height:0;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
+.panels::-webkit-scrollbar{display:none}
+.panel{flex:0 0 100%;width:100%;scroll-snap-align:start;scroll-snap-stop:always;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:18px 16px 110px}
+.panel-inner{max-width:760px;margin:0 auto;display:grid;gap:16px}
+.swipe-hint{font-family:var(--mono);font-size:11px;color:var(--muted);text-align:center;letter-spacing:.08em}
+
+.case-foot{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+  background:linear-gradient(180deg, rgba(13,15,18,0), rgba(13,15,18,.95) 35%);pointer-events:none}
+.case-foot .btn{width:100%;max-width:760px;margin:0 auto;display:flex;pointer-events:auto;font-size:16px;padding:15px}
+
+/* Kartlar */
+.card{padding:18px 16px}
+.card h4{font-family:var(--serif);font-size:18px;margin:6px 0 10px}
+.card p+p{margin-top:10px}
+.hook-box{border-left:3px solid var(--gold);padding:4px 0 4px 14px;font-family:var(--serif);font-style:italic;font-size:17px;color:#d8d1c0}
+.tl{list-style:none;display:grid;gap:0}
+.tl li{display:grid;grid-template-columns:62px 1fr;gap:10px;padding:7px 0;border-bottom:1px dashed rgba(42,35,24,.2)}
+.tl li:last-child{border-bottom:0}
+.tl b{font-family:var(--mono);color:var(--blood)}
+.kroki{background:#f3ecd9;border:1px solid rgba(42,35,24,.2);border-radius:3px;padding:6px}
+.kroki svg{display:block;width:100%;height:auto}
+.numlist{list-style:none;counter-reset:n;display:grid;gap:9px}
+.numlist li{counter-increment:n;padding-left:28px;position:relative}
+.numlist li::before{content:counter(n);position:absolute;left:0;top:1px;width:19px;height:19px;border:1px solid var(--blood);color:var(--blood);
+  border-radius:50%;font-family:var(--mono);font-size:11px;display:grid;place-items:center}
+.quote{font-family:var(--mono);font-size:14px;padding:9px 0;border-bottom:1px dashed rgba(42,35,24,.2)}
+.quote:last-child{border-bottom:0}
+
+/* Şüpheliler */
+.suspect{padding:16px}
+.s-top{display:flex;gap:14px;align-items:flex-start}
+.mugshot{flex:0 0 74px;height:92px;border-radius:2px;background:#2b2a27;position:relative;overflow:hidden;
+  display:grid;place-items:center;font-family:var(--serif);font-size:30px;font-weight:900;color:#f0e8d4;
+  box-shadow:0 0 0 4px #f6f0e0, 0 3px 8px rgba(0,0,0,.35);transform:rotate(-2deg);margin:4px 4px 0 2px}
+.mugshot::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg, rgba(255,255,255,.07) 0 1px, transparent 1px 12px)}
+.mugshot .tag{position:absolute;bottom:4px;left:0;right:0;text-align:center;font-family:var(--mono);font-size:9px;letter-spacing:.1em;font-weight:400;color:#cfc6b0}
+.tape{position:absolute;top:-8px;left:50%;width:46px;height:16px;transform:translateX(-50%) rotate(3deg);background:rgba(212,175,55,.35)}
+.s-info{flex:1;min-width:0}
+.s-info h4{font-family:var(--serif);font-size:19px;margin:0}
+.s-info .role{font-size:13px;color:var(--ink-soft);margin:2px 0 8px}
+.rel{font-size:13.5px}
+.alibi{margin-top:12px;padding:10px 12px;background:rgba(139,0,0,.06);border-left:3px solid var(--blood);font-family:var(--mono);font-size:13.5px}
+.alibi small{display:block;font-family:var(--sans);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--blood);margin-bottom:3px;font-weight:600}
+details.qa{margin-top:12px;border-top:1px solid rgba(42,35,24,.2);padding-top:10px}
+details.qa summary{cursor:pointer;font-weight:600;font-size:13.5px;list-style:none;display:flex;justify-content:space-between;color:var(--ink)}
+details.qa summary::-webkit-details-marker{display:none}
+details.qa summary::after{content:"+";font-family:var(--mono);font-size:18px;line-height:1;color:var(--blood)}
+details.qa[open] summary::after{content:"–"}
+.qa-item{margin-top:10px;font-size:14px}
+.qa-item .q{font-family:var(--mono);color:var(--ink-soft);font-size:13px}
+.qa-item .a{margin-top:2px}
+.mark-row{display:flex;gap:6px;margin-top:12px}
+.mark{flex:1;padding:7px 4px;border:1px solid rgba(42,35,24,.25);border-radius:3px;font-size:12px;font-family:var(--mono);color:var(--ink-soft)}
+.mark.on.m-supheli{background:var(--blood);color:#fff;border-color:var(--blood)}
+.mark.on.m-elendi{background:#3d4a3f;color:#fff;border-color:#3d4a3f}
+.mark.on.m-belirsiz{background:#7a6a43;color:#fff;border-color:#7a6a43}
+.suspect.is-elendi{opacity:.62}
+.suspect.is-elendi h4{text-decoration:line-through;text-decoration-color:var(--blood)}
+
+/* Kanıtlar */
+.ev{border-radius:4px;overflow:hidden;border:1px solid var(--line);background:var(--bg2)}
+.ev-h{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.ev-code{font-family:var(--mono);font-size:12px;color:#16130a;background:var(--gold);padding:2px 7px;border-radius:2px;font-weight:700}
+.ev-h b{font-family:var(--serif);font-size:16px;flex:1}
+.ev-src{font-family:var(--mono);font-size:11px;color:var(--muted);padding:8px 14px 0}
+.ev-body{padding:12px 14px 14px}
+.ev-foot{display:flex;justify-content:flex-end;padding:0 14px 12px}
+.ev-foot button{font-size:12px;font-family:var(--mono);color:var(--gold);border:1px dashed var(--gold-dim);padding:6px 10px;border-radius:3px}
+.cctv{background:#07090a;border:1px solid #1d2a22;border-radius:3px;padding:10px 12px;font-family:var(--mono);font-size:13px;color:#9fd9a8;position:relative;overflow:hidden}
+.cctv::before{content:"● REC";position:absolute;top:8px;right:10px;color:#e04848;font-size:10px;letter-spacing:.1em;animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.2}}
+.cctv::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg, rgba(255,255,255,.03) 0 1px, transparent 1px 3px)}
+.cctv .row{display:grid;grid-template-columns:96px 1fr;gap:8px;padding:4px 0;border-bottom:1px solid #12201a}
+.cctv .row:last-child{border-bottom:0}
+.cctv .row span:first-child{color:#d6c26a}
+.ev-note{margin-top:10px;font-size:13px;color:var(--muted);font-style:italic}
+.receipt{background:#f7f4ec;color:#222;font-family:var(--mono);font-size:13px;padding:14px 14px 18px;max-width:340px;margin:0 auto;position:relative;
+  -webkit-mask: radial-gradient(circle at 6px 100%, transparent 5px, #000 5.5px) -6px 100%/12px 100% repeat-x;
+          mask: radial-gradient(circle at 6px 100%, transparent 5px, #000 5.5px) -6px 100%/12px 100% repeat-x;}
+.receipt .rh{text-align:center;font-weight:700;border-bottom:1px dashed #999;padding-bottom:8px;margin-bottom:8px;letter-spacing:.05em}
+.receipt .rr{display:grid;grid-template-columns:auto 1fr auto;gap:10px;padding:3px 0}
+.receipt .rf{border-top:1px dashed #999;margin-top:8px;padding-top:8px;font-size:12px;color:#555}
+.photo{background:#111;border-radius:3px;padding:8px 8px 6px;max-width:360px;margin:0 auto}
+.photo svg{display:block;width:100%;height:auto;border-radius:2px}
+.exif{margin-top:10px;font-family:var(--mono);font-size:12.5px;display:grid;gap:3px}
+.exif div{display:grid;grid-template-columns:120px 1fr;gap:8px}
+.exif span:first-child{color:var(--muted)}
+.chat{margin-top:12px;background:#0b141a;border-radius:6px;padding:10px}
+.chat .who{font-size:11px;color:#8aa0a8;margin-bottom:6px;font-family:var(--mono)}
+.bubble{background:#005c4b;color:#e9edef;padding:8px 10px 6px;border-radius:8px 8px 2px 8px;margin-left:auto;max-width:88%;font-size:14px}
+.bubble small{display:block;text-align:right;font-size:10.5px;color:#a6c4bc;margin-top:2px}
+.docs{display:grid;gap:12px}
+.docs .paper{padding:14px}
+.docs h5{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--blood);margin-bottom:6px}
+
+/* Not defteri */
+.notebook{padding:18px 16px 16px;background-color:#f1e9d2;
+  background-image:linear-gradient(90deg, transparent 34px, rgba(139,0,0,.35) 34px 35px, transparent 35px),
+    repeating-linear-gradient(180deg, transparent 0 27px, rgba(60,90,140,.22) 27px 28px);}
+.notebook textarea{width:100%;min-height:260px;border:0;outline:0;background:transparent;resize:vertical;
+  font-family:var(--mono);font-size:15px;line-height:28px;color:#1f1a12;padding-left:28px}
+.notebook .saved{font-family:var(--mono);font-size:11px;color:var(--ink-soft);text-align:right}
+.hint{display:flex;gap:12px;align-items:flex-start;padding:14px;border:1px solid var(--line);border-radius:4px;background:var(--bg2)}
+.hint .n{font-family:var(--mono);color:var(--gold);font-size:13px;min-width:62px}
+.hint .body{flex:1;font-size:14px}
+.hint.open{border-color:var(--gold-dim)}
+.hint .btn{padding:8px 12px;font-size:13px}
+.hint .lockedtxt{color:var(--muted);font-family:var(--mono);font-size:12.5px}
+
+/* Modal */
+.modal{position:fixed;inset:0;background:rgba(5,6,8,.82);backdrop-filter:blur(3px);display:flex;align-items:flex-end;justify-content:center;z-index:50}
+@media(min-width:700px){.modal{align-items:center}}
+.sheet{width:100%;max-width:620px;max-height:92vh;overflow-y:auto;background:#12151a;border:1px solid var(--line);border-radius:12px 12px 0 0;padding:20px 18px 22px}
+@media(min-width:700px){.sheet{border-radius:10px}}
+.steps{display:flex;gap:6px;margin:10px 0 18px}
+.steps i{flex:1;height:3px;background:var(--line);border-radius:2px}
+.steps i.on{background:var(--gold)}
+.sheet h3{font-family:var(--serif);font-size:22px;margin-bottom:4px}
+.sheet .sub{color:var(--muted);font-size:13.5px;margin-bottom:16px}
+.opts{display:grid;gap:8px}
+.opt{display:flex;gap:12px;align-items:center;text-align:left;width:100%;padding:12px;border:1px solid var(--line);border-radius:6px;background:var(--bg2)}
+.opt.on{border-color:var(--gold);background:rgba(212,175,55,.08)}
+.opt .dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--muted);flex:0 0 auto}
+.opt.on .dot{border-color:var(--gold);background:radial-gradient(circle, var(--gold) 45%, transparent 50%)}
+.opt small{display:block;color:var(--muted);font-size:12px}
+.sheet .nav{display:flex;gap:10px;margin-top:18px}
+.sheet .nav .btn{flex:1}
+.verdict{margin-top:14px;padding:12px;border-radius:6px;border:1px solid #5c1a1a;background:rgba(139,0,0,.12);font-size:14px}
+
+/* Sonuç */
+.result{max-width:620px;margin:0 auto;padding:26px 18px 60px}
+.result .paper{padding:26px 20px 22px;text-align:center;overflow:hidden}
+.result h2{font-family:var(--serif);font-size:28px;margin:14px 0 4px;color:#1d170e}
+.result .ribbon{position:absolute;top:0;left:0;right:0;height:5px;background:var(--blood)}
+.grid4{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:22px 0 6px;text-align:left}
+.grid4 div{border:1px solid rgba(42,35,24,.2);padding:10px 12px;border-radius:3px}
+.grid4 small{display:block;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);font-weight:600}
+.grid4 b{font-family:var(--mono);font-size:20px;color:var(--ink)}
+.rank{font-family:var(--serif);font-size:22px;color:var(--blood);margin-top:12px}
+.sharebox{margin-top:18px;background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:14px;font-family:var(--mono);font-size:13.5px;white-space:pre-wrap;text-align:left}
+.share-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.share-actions .btn{text-decoration:none}
+.x-btn{background:#fff;color:#000}
+.solution{margin-top:18px}
+.solution summary{cursor:pointer;padding:14px;border:1px solid var(--line);border-radius:6px;font-weight:600;list-style:none;display:flex;justify-content:space-between}
+.solution summary::-webkit-details-marker{display:none}
+.solution .paper{margin-top:10px;text-align:left;padding:18px 16px}
+.solution h5{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--blood);margin:14px 0 6px}
+.solution h5:first-child{margin-top:0}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--gold);color:#16130a;padding:9px 16px;border-radius:20px;font-weight:600;font-size:13px;z-index:80;transition:opacity .3s}
+</style>
+</head>
+<body>
+
+<!-- =====================================================================
+     VAKA VERİSİ (JSON)
+     Yeni vaka eklemek için "vakalar" dizisine aynı yapıda bir nesne ekle.
+     "gununVakasi" alanı, ana sayfada "Günün Vakası" olarak gösterilecek vakanın id'si.
+     ===================================================================== -->
+<script type="application/json" id="vaka-verisi">
+{
+  "gununVakasi": "vaka-014",
+  "vakalar": [
+    {
+      "id": "vaka-014",
+      "no": 14,
+      "baslik": "Moda'da Kayıp Harita",
+      "zorluk": "orta",
+      "kategori": "Şehir Gizemi",
+      "konum": "Moda, Kadıköy",
+      "tarih": "6 Kasım, Cuma",
+      "giris": "Kırk yıldır Moda'da kitap kokan bir dükkân. Bir imza günü, iki kamera, dört şüpheli… ve kapanışta yerinde olmayan 150 yıllık bir harita.",
+
+      "rapor": {
+        "ozet": [
+          "6 Kasım Cuma akşamı, Moda'daki sahaf Eski Harf'te yazar Defne Kara'nın imza günü düzenlendi. Etkinliğe 12 izleyici ve dükkânın yakın çevresinden 4 kişi katıldı.",
+          "Dükkân sahibi Nevzat Ilgaz (68), saat 21:40'ta kapanış için arka odaya geçtiğinde dükkânın en değerli parçası olan 1876 tarihli el çizimi “Dersaadet Haritası”nın vitrinden çerçevesiyle birlikte kaybolduğunu fark etti. Tahmini değeri 2,4 milyon TL."
+        ],
+        "mekan": [
+          "Ön salon: Etkinlik alanı, imza masası ve kasa. Kasa kamerası (CAM-01) ön salonu ve arka odaya açılan iç kapıyı görüyor.",
+          "Arka oda: Nadir eserler vitrini, tuvalet ve avluya açılan çelik arka kapı. Arka odada ve avluda kamera yok.",
+          "Avlu, bir bahçe kapısıyla yan sokağa (Leylak Sokak) açılıyor. Ön kapıda ayrı bir kamera (CAM-02) var."
+        ],
+        "zamanCizelgesi": [
+          { "saat": "19:00", "olay": "Dükkân etkinlik için açıldı, misafirler gelmeye başladı." },
+          { "saat": "19:30", "olay": "Defne Kara okumaya başladı." },
+          { "saat": "20:45", "olay": "Okuma bitti, imza başladı. İzleyiciler dağılmaya başladı." },
+          { "saat": "21:20", "olay": "İmza sona erdi." },
+          { "saat": "21:40", "olay": "Nevzat Ilgaz haritanın yerinde olmadığını fark etti." },
+          { "saat": "21:42", "olay": "Arka çelik kapının kilitsiz olduğu görüldü." },
+          { "saat": "21:55", "olay": "Polis olay yerine ulaştı." }
+        ],
+        "tutanak": [
+          "Vitrinin camı kırılmamış. 4 haneli şifreli kilit zorlanmadan, doğru şifreyle açılmış.",
+          "Arka çelik kapının kilidinde zorlama izi yok. Bu kapı içeriden de dışarıdan da yalnızca anahtarla açılıp kilitlenebiliyor.",
+          "Tuvaletin küçük penceresi demir parmaklıklı (parmaklık aralığı 12 cm). Pencere pervazında taze sigara külü ve bir izmarit bulundu.",
+          "Harita, ahşap çerçevesiyle birlikte alınmış; boş çerçeve bulunamadı. Çerçeve ölçüsü: 64 × 48 cm.",
+          "Raf sayımı: Defne Kara'nın dükkâna emanet bıraktığı “Kuyu” romanından 6 adet eksik; bu kitaplara ait satış kaydı yok."
+        ],
+        "magdurIfadesi": [
+          "Vitrinin şifresini bir ben bilirim, bir de yeğenim Murat. Stok sayımını o yapar.",
+          "Arka kapının iki anahtarı var. Biri benim anahtarlığımda, bütün akşam belimdeydi. Diğeri Murat'ta; teslimatları o karşılar.",
+          "Saat 20:50'de Kerem Bey haritayı son bir kez görmek istedi. Vitrini açtım, fotoğrafını çekti, sonra kapatıp kilitledim. Şifreyi girerken arkamdaydı, görmüş olabilir.",
+          "Murat geçen ay benden 300 bin lira istedi. “Kriptoda battım, alacaklılar kapıda” dedi. Vermedim, aramız biraz bozuldu.",
+          "21:40'a kadar ön salondan ayrılmadım."
+        ]
+      },
+
+      "supheliler": [
+        {
+          "id": "selin",
+          "ad": "Selin Aydın",
+          "yas": 23,
+          "meslek": "Yarı zamanlı kasiyer, üniversite öğrencisi",
+          "iliski": "Bir yıldır dükkânda çalışıyor. Nevzat Bey'in güvendiği biri.",
+          "alibi": "Bütün akşam kasadaydım. Sadece 20:15 gibi karşıdaki kafeye kahve almaya çıktım, on dakikada döndüm.",
+          "sorgu": [
+            { "s": "Akşam boyunca arka odaya girdin mi?", "c": "Hayır. Orası Nevzat Bey'in odası, ben pek girmem." },
+            { "s": "Vitrinin şifresini biliyor musun?", "c": "Bilmiyorum. Bana hiç söylemedi." },
+            { "s": "Kahveyi hangi kafeden aldın?", "c": "Karşıdaki… adı neydi… Ya, tam hatırlamıyorum şu an." }
+          ]
+        },
+        {
+          "id": "kerem",
+          "ad": "Kerem Taşkın",
+          "yas": 47,
+          "meslek": "Antika koleksiyoncusu",
+          "iliski": "Geçen ay haritayı 1,8 milyon TL'ye almak istedi; Nevzat Bey reddetti.",
+          "alibi": "21:05'te çıktım, Moda'da bir meyhanede arkadaşlarla buluştum. Gece yarısına kadar oradaydım.",
+          "sorgu": [
+            { "s": "Haritanın fotoğrafını neden çektiniz?", "c": "Güzel bir eser. Son kez bakmak istedim, o kadar." },
+            { "s": "Fotoğrafı kimseye gönderdiniz mi?", "c": "Hayır. Kendime çektim." },
+            { "s": "Nevzat Bey'e kızgın mısınız?", "c": "Kırgınım. Ama hırsız değilim, bunu yazın lütfen." }
+          ]
+        },
+        {
+          "id": "defne",
+          "ad": "Defne Kara",
+          "yas": 34,
+          "meslek": "Yazar",
+          "iliski": "İmza gününün konuğu. Kitaplarını satılması için dükkâna emanet bırakıyor.",
+          "alibi": "21:20'ye kadar imza verdim. 21:25'te taksiye binip Beşiktaş'a geçtim.",
+          "sorgu": [
+            { "s": "Çıkarken kolunuzun altındaki paket neydi?", "c": "Kendi dosyalarım. Müsvedde, notlar…" },
+            { "s": "Arka odaya girdiniz mi?", "c": "Hayır. Bütün akşam masadan kalkmadım ki." },
+            { "s": "Nevzat Bey'le aranız nasıl?", "c": "İyidir. Arada satış hesabı yüzünden ufak tartışmalar olur, o kadar." }
+          ]
+        },
+        {
+          "id": "murat",
+          "ad": "Murat Eren",
+          "yas": 38,
+          "meslek": "Nevzat Bey'in yeğeni; muhasebe ve stok işleri",
+          "iliski": "Dükkânın hesaplarına bakıyor; vitrinin şifresini ve arka kapının anahtarını biliyor.",
+          "alibi": "20:40'ta çıktım, 20:50 vapuruyla Üsküdar'a geçtim. 21:15'te evdeydim, sabaha kadar çıkmadım.",
+          "sorgu": [
+            { "s": "Çıkmadan önce arka odaya neden girdiniz?", "c": "Tuvalete. Üç dakika sürdü sürmedi." },
+            { "s": "Arka kapının anahtarı şu an nerede?", "c": "Anahtarlığımda, her zamanki gibi. İsterseniz bakın." },
+            { "s": "Amcanızdan borç istediniz mi?", "c": "Herkesin zor zamanı olur. Bunun haritayla ne ilgisi var?" }
+          ]
+        }
+      ],
+
+      "kanitlar": [
+        {
+          "id": "k1",
+          "kod": "K-1",
+          "baslik": "Kasa Kamerası Kaydı",
+          "tur": "kamera",
+          "kaynak": "CAM-01 · Ön salon ve arka oda iç kapısı",
+          "satirlar": [
+            ["19:30–21:20", "Defne imza masasında. Arka odaya hiç girmiyor."],
+            ["20:15", "Selin arka odaya giriyor."],
+            ["20:27", "Selin arka odadan çıkıyor, kasaya dönüyor."],
+            ["20:30–21:45", "Selin kasada; kadrajdan hiç çıkmıyor."],
+            ["20:35", "Murat arka odaya giriyor."],
+            ["20:38", "Murat arka odadan çıkıyor."],
+            ["20:50", "Nevzat ve Kerem arka odaya giriyor."],
+            ["20:53", "Nevzat ve Kerem arka odadan çıkıyor."],
+            ["20:53–21:40", "Arka oda kapısından geçen kimse yok."],
+            ["21:40", "Nevzat arka odaya giriyor."]
+          ],
+          "not": "Nevzat Ilgaz 19:00–21:40 arasında, 20:50–20:53 dışında, sürekli ön salonda görünüyor."
+        },
+        {
+          "id": "k2",
+          "kod": "K-2",
+          "baslik": "Ön Kapı Kamerası",
+          "tur": "kamera",
+          "kaynak": "CAM-02 · Moda Caddesi girişi",
+          "satirlar": [
+            ["19:00–19:25", "Misafirler giriyor (toplam 16 kişi)."],
+            ["19:25–20:40", "Giriş ya da çıkış yok."],
+            ["20:40", "Murat Eren çıkıyor."],
+            ["20:45–21:00", "12 izleyici çıkıyor."],
+            ["21:05", "Kerem Taşkın çıkıyor."],
+            ["21:25", "Defne Kara çıkıyor. Kolunun altında yaklaşık 25 × 18 cm'lik kahverengi kâğıt bir paket var."],
+            ["21:25–21:55", "Giriş ya da çıkış yok."]
+          ],
+          "not": ""
+        },
+        {
+          "id": "k3",
+          "kod": "K-3",
+          "baslik": "Kerem Taşkın'ın Telefonu",
+          "tur": "foto",
+          "kaynak": "Adli inceleme · Galeri ve mesajlar",
+          "meta": [
+            ["Dosya", "IMG_4471.HEIC"],
+            ["Çekim zamanı", "06.11.2026 · 20:52:14"],
+            ["Konum", "Moda, Kadıköy"],
+            ["İçerik", "Harita vitrinde, çerçevesinin içinde."]
+          ],
+          "mesaj": {
+            "kime": "J. Whitmore (Londra)",
+            "saat": "20:54",
+            "metin": "Harita hâlâ yerinde, fotoğraf ekte. Adam satmıyor. Pazartesi son teklifi götüreceğim."
+          }
+        },
+        {
+          "id": "k4",
+          "kod": "K-4",
+          "baslik": "Murat Eren'in İstanbulkart Dökümü",
+          "tur": "fis",
+          "kaynak": "Ulaşım kartı hareketleri · 6 Kasım",
+          "fisBaslik": "İSTANBULKART · HAREKET DÖKÜMÜ",
+          "satirlar": [
+            ["18:20", "Üsküdar İskelesi", "Vapur"],
+            ["21:47", "Kadıköy İskelesi", "Vapur"]
+          ],
+          "fisNot": "Bu tarihte başka kullanım bulunmamaktadır."
+        },
+        {
+          "id": "k5",
+          "kod": "K-5",
+          "baslik": "Komşu Kapı Zili Kamerası",
+          "tur": "kamera",
+          "kaynak": "Leylak Sk. No:7 · Avlu kapısının tam karşısı",
+          "satirlar": [
+            ["21:12:40", "Kapüşonlu biri sokaktan avluya giriyor. Elleri boş."],
+            ["21:31:08", "Kapüşonlu biri avludan sokağa çıkıyor. Battaniyeye sarılı, büyük, düz ve dikdörtgen bir nesne taşıyor; nesne gövdesinden geniş. Yüzü görünmüyor, iskele yönüne yürüyor."],
+            ["21:00–22:00", "Bu iki kayıt dışında avluya giren ya da çıkan yok."]
+          ],
+          "not": "Görüntü karanlık; kişinin boyu ve kıyafeti net seçilemiyor."
+        },
+        {
+          "id": "k6",
+          "kod": "K-6",
+          "baslik": "Alibi Doğrulama Belgeleri",
+          "tur": "rapor",
+          "kaynak": "Polis tarafından toplanan belgeler",
+          "belgeler": [
+            { "baslik": "Meyhane adisyonu · Masa 4", "metin": "Kerem Taşkın adına 21:10'da açıldı, 23:05'te kapandı. Garson ifadesi: “Kerem Bey masadan hiç kalkmadı.”" },
+            { "baslik": "Taksi uygulaması kaydı", "metin": "Yolcu: Defne Kara. Biniş 21:26, Eski Harf önü. İniş 22:04, Beşiktaş." }
+          ]
+        }
+      ],
+
+      "ipuclari": [
+        "Haritanın en son ne zaman yerinde görüldüğünü bul. Hırsızlık o andan sonra olmuş olmalı. O andan sonra kim neredeydi?",
+        "20:53'ten sonra arka odaya ön salondan geçen olmadı. O halde hırsız arka odaya başka bir yoldan girdi. O yolu kimler açabilirdi?",
+        "Bir şüphelinin anlattığı vapur saatini, kart dökümündeki saatle karşılaştır."
+      ],
+
+      "suclama": {
+        "motivasyonlar": [
+          { "id": "borc", "metin": "Borç", "aciklama": "Ağır bir borcu kapatmak için paraya ihtiyacı vardı." },
+          { "id": "tutku", "metin": "Tutku", "aciklama": "Haritaya ne pahasına olursa olsun sahip olmak istiyordu." },
+          { "id": "intikam", "metin": "İntikam", "aciklama": "Nevzat Bey'e duyduğu kırgınlığın hesabını soruyordu." },
+          { "id": "sir", "metin": "Sır", "aciklama": "Ortaya çıkmasından korktuğu bir şeyi örtüyordu." }
+        ],
+        "dogru": { "supheli": "murat", "kanit": "k4", "motivasyon": "borc" }
+      },
+
+      "cozum": {
+        "ozet": "Haritayı Murat Eren çaldı. “20:50 vapuruyla Üsküdar'a geçtim” diyor, ama İstanbulkart'ı o akşam Kadıköy'de ilk kez 21:47'de kullanılmış (K-4).",
+        "hikaye": [
+          "Murat kripto yatırımlarında büyük zarar etmişti ve alacaklıları kapıdaydı. Amcası borç vermeyince haritayı satmaya karar verdi.",
+          "20:40'ta herkesin göreceği şekilde ön kapıdan çıktı ve kendine bir alibi kurdu. Ama vapura binmedi, Moda'da bekledi.",
+          "21:12'de yan sokaktan avluya girdi (K-5) ve kendi anahtarıyla arka çelik kapıyı açtı. Ön salonda imza kuyruğu sürerken arka odada sessizce bekledi.",
+          "Bildiği şifreyle vitrini açtı, haritayı çerçevesiyle birlikte battaniyeye sardı ve 21:31'de avludan çıktı. 21:47 vapuruyla Üsküdar'a geçti. Acele ettiği için arka kapıyı kilitlemeyi unuttu."
+        ],
+        "eleme": [
+          { "ad": "Selin Aydın", "metin": "Arka odada 12 dakika yalnız kaldı ve kafe konusunda yalan söyledi; ön kapı kamerasında 20:15'te çıkışı yok (K-2). Ama harita 20:52'de hâlâ yerindeydi (K-3) ve Selin 20:30'dan sonra kasadan hiç ayrılmadı (K-1). Sırrı: Kitaplarla dolu dükkânda yasak olmasına rağmen tuvalet penceresinde sigara içiyordu." },
+          { "ad": "Kerem Taşkın", "metin": "Güçlü bir nedeni vardı, şifreyi görmüş olabilirdi ve fotoğrafı kimseye göndermediğini söyleyerek yalan söyledi (K-3). Ama arka kapının anahtarı yoktu ve 21:10–23:05 arasında meyhanedeydi (K-6). Sırrı: Londra'daki bir alıcı adına aracılık yapıyordu." },
+          { "ad": "Defne Kara", "metin": "Elinde paketle çıktı. Ama paket yaklaşık 25 × 18 cm, harita çerçevesi 64 × 48 cm. Ayrıca 21:26'dan itibaren taksideydi; 21:31'de avluda olamazdı (K-6). Sırrı: Emanet bıraktığı kitaplarından 6 tanesini haber vermeden geri almıştı." }
+        ],
+        "yaniltmacalar": [
+          "Murat 20:40'ta çıktığı ve harita 20:52'de yerinde olduğu için ilk bakışta temize çıkıyor gibi görünüyor. Oysa Murat geri döndü.",
+          "Selin'in yalanı ve tuvaletteki sigara izi, arka odadaki şüpheli bir hareketi düşündürüyor.",
+          "Defne'nin paketi, çalınan eşya gibi görünüyor."
+        ]
+      }
+    }
+  ],
+  "yakinda": [
+    { "no": 15, "baslik": "Kar Altındaki Dağ Evi", "kategori": "Kapalı Oda", "zorluk": "zor" },
+    { "no": 16, "baslik": "Sunucu Odasında Sessizlik", "kategori": "Siber Suçlar", "zorluk": "uzman" },
+    { "no": 17, "baslik": "Galata'da Kayıp Mühür", "kategori": "Tarihi Gizem", "zorluk": "kolay" },
+    { "no": 18, "baslik": "Yönetim Kurulu Sızıntısı", "kategori": "Kurumsal Casusluk", "zorluk": "orta" }
+  ]
+}
+</script>
+
+<!-- ================= ANA SAYFA ================= -->
+<div id="home" class="view home"></div>
+
+<!-- ================= VAKA MASASI ================= -->
+<div id="case" class="case hidden">
+  <header class="case-head">
+    <div class="r1">
+      <button class="icon-btn" id="backBtn" aria-label="Geri">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="stats">
+        <span class="stat"><i>⏱</i><span id="timer">00:00</span></span>
+        <span class="stat"><i>🔍</i><span id="hintStat">0/3</span></span>
+        <span class="stat"><i>⚖</i><span id="attemptStat">2</span></span>
+      </div>
+    </div>
+    <div class="eyebrow" id="caseEyebrow" style="margin-top:10px"></div>
+    <h2 id="caseTitle"></h2>
+  </header>
+  <nav class="tabs" id="tabs">
+    <button class="tab on" data-i="0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 3h6l1 2h3v16H5V5h3z"/><path d="M9 11h6M9 15h4"/></svg>Olay Yeri</button>
+    <button class="tab" data-i="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>Şüpheliler</button>
+    <button class="tab" data-i="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l6 6"/></svg>Kanıtlar</button>
+    <button class="tab" data-i="3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h11a2 2 0 012 2v16H8a2 2 0 01-2-2z"/><path d="M6 17h13M10 7h5"/></svg>Not Defteri</button>
+  </nav>
+  <main class="panels" id="panels">
+    <section class="panel"><div class="panel-inner" id="pReport"></div></section>
+    <section class="panel"><div class="panel-inner" id="pSuspects"></div></section>
+    <section class="panel"><div class="panel-inner" id="pEvidence"></div></section>
+    <section class="panel"><div class="panel-inner" id="pNotes"></div></section>
+  </main>
+  <div class="case-foot"><button class="btn btn-blood" id="solveBtn">⚖ Vakayı Çöz</button></div>
+</div>
+
+<!-- ================= SONUÇ ================= -->
+<div id="result" class="view result hidden"></div>
+
+<!-- ================= SUÇLAMA MODALI ================= -->
+<div id="modal" class="modal hidden"><div class="sheet" id="sheet"></div></div>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- Veri ve kayıt ---------- */
+const DATA = JSON.parse(document.getElementById('vaka-verisi').textContent);
+const SITE_URL = ""; // Kendi alan adını buraya yaz (örn. "https://siteadin.com"). Boş kalırsa sayfanın adresi kullanılır.
+const MAX_ATTEMPTS = 2;
+const HINT_PENALTY = 15;
+const LEVELS = {
+  kolay: { ad: "Kolay", rutbe: "Çaylak" },
+  orta:  { ad: "Orta",  rutbe: "Dedektif" },
+  zor:   { ad: "Zor",   rutbe: "Başkomiser" },
+  uzman: { ad: "Uzman", rutbe: "Sherlock" }
+};
+
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+};
+const freshState = () => ({ start:null, hints:0, attempts:0, correctParts:0, totalParts:0, notes:"", marks:{}, done:null });
+const loadState = id => Object.assign(freshState(), store.get("gd_" + id, {}));
+const saveState = () => store.set("gd_" + CUR.id, S);
+
+let CUR = null, S = null, timerInt = null;
+
+/* ---------- Yardımcılar ---------- */
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+const fmt = sec => { sec = Math.max(0, Math.floor(sec)); const m = Math.floor(sec/60), s = sec%60; return String(m).padStart(2,"0") + ":" + String(s).padStart(2,"0"); };
+const show = id => { ["home","case","result"].forEach(v => $(v).classList.toggle("hidden", v !== id)); window.scrollTo(0,0); };
+function toast(msg){ const t = document.createElement("div"); t.className = "toast"; t.textContent = msg; document.body.appendChild(t);
+  setTimeout(() => { t.style.opacity = "0"; }, 1600); setTimeout(() => t.remove(), 2000); }
+const caseById = id => DATA.vakalar.find(c => c.id === id);
+const elapsed = () => S.done ? S.done.time : (S.start ? (Date.now() - S.start)/1000 : 0);
+
+/* ---------- ANA SAYFA ---------- */
+let filter = "hepsi";
+function renderHome(){
+  const d = caseById(DATA.gununVakasi);
+  const st = loadState(d.id);
+  const btnText = st.done ? "Sonucu Gör" : (st.start ? "Soruşturmaya Devam Et" : "Dosyayı Aç");
+  const list = DATA.vakalar.map(c => ({...c, playable:true})).concat(DATA.yakinda.map(c => ({...c, playable:false})))
+    .filter(c => filter === "hepsi" || c.zorluk === filter)
+    .sort((a,b) => a.no - b.no);
+
+  $("home").innerHTML = `
+    <div class="brand">
+      <div><h1>GİZLİ <span>DOSYA</span></h1><small>HER GECE YARISI YENİ BİR VAKA</small></div>
+      <div class="seal">Gizli<br>Dosya</div>
+    </div>
+
+    <article class="paper daily">
+      <div class="ribbon"></div>
+      <div class="top">
+        <div class="eyebrow">Günün Vakası · #${d.no}</div>
+        <span class="stamp" style="font-size:11px">Gizli</span>
+      </div>
+      <h2>${esc(d.baslik)}</h2>
+      <p class="hook">${esc(d.giris)}</p>
+      <div class="meta">
+        <span class="badge lvl-${d.zorluk}">${LEVELS[d.zorluk].ad} · ${LEVELS[d.zorluk].rutbe}</span>
+        <span class="badge">${esc(d.kategori)}</span>
+        <span class="badge">${esc(d.konum)}</span>
+      </div>
+      <div class="row">
+        <div class="countdown">Yeni vakaya kalan<br><b id="countdown">--:--:--</b></div>
+        <button class="btn btn-gold" id="openDaily">${btnText} →</button>
+      </div>
+    </article>
+
+    <div class="section-h"><h3>Vaka Arşivi</h3><span class="eyebrow">${DATA.vakalar.length + DATA.yakinda.length} dosya</span></div>
+    <div class="filters">
+      ${[["hepsi","Tümü"],["kolay","Çaylak"],["orta","Dedektif"],["zor","Başkomiser"],["uzman","Sherlock"]]
+        .map(([k,l]) => `<button class="chip ${filter===k?"on":""}" data-f="${k}">${l}</button>`).join("")}
+    </div>
+    <div class="archive">
+      ${list.length ? list.map(c => {
+        const done = c.playable && loadState(c.id).done;
+        return `<button class="acard ${c.playable?"":"locked"}" ${c.playable?`data-open="${c.id}"`:""}>
+          <span class="no">#${c.no}</span>
+          <span class="t"><b>${esc(c.baslik)}</b><span>${esc(c.kategori)}</span></span>
+          <span class="badge lvl-${c.zorluk}">${LEVELS[c.zorluk].ad}</span>
+          ${c.playable ? (done ? `<span class="lock" style="color:var(--gold)">✓</span>` : "") : `<span class="lock">Yakında</span>`}
+        </button>`; }).join("") : `<p style="color:var(--muted)">Bu seviyede henüz vaka yok.</p>`}
+    </div>`;
+
+  $("openDaily").onclick = () => openCase(d.id);
+  $("home").querySelectorAll("[data-f]").forEach(b => b.onclick = () => { filter = b.dataset.f; renderHome(); });
+  $("home").querySelectorAll("[data-open]").forEach(b => b.onclick = () => openCase(b.dataset.open));
+  tickCountdown();
+}
+function tickCountdown(){
+  const el = $("countdown"); if(!el) return;
+  const now = new Date(), mid = new Date(now); mid.setHours(24,0,0,0);
+  const s = Math.floor((mid - now)/1000);
+  el.textContent = [Math.floor(s/3600), Math.floor(s%3600/60), s%60].map(n => String(n).padStart(2,"0")).join(":");
+}
+setInterval(tickCountdown, 1000);
+
+/* ---------- KROKİ (SVG) ---------- */
+const KROKI = `<svg viewBox="0 0 360 270" font-family="Courier Prime, Courier New, monospace" font-size="10" fill="#2a2318">
+  <defs><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#2a2318" stroke-width=".6" opacity=".35"/></pattern></defs>
+  <rect x="300" y="10" width="34" height="230" fill="#d9ceb2"/>
+  <text x="317" y="130" transform="rotate(90 317 130)" text-anchor="middle" font-size="9">LEYLAK SK.</text>
+  <rect x="10" y="236" width="324" height="24" fill="#d9ceb2"/>
+  <text x="150" y="252" text-anchor="middle" font-size="9">MODA CADDESİ</text>
+  <rect x="20" y="20" width="200" height="88" fill="#efe6cf" stroke="#2a2318" stroke-width="2.5"/>
+  <text x="120" y="36" text-anchor="middle" font-weight="700">ARKA ODA</text>
+  <rect x="80" y="52" width="80" height="22" fill="none" stroke="#8B0000" stroke-width="1.8"/>
+  <text x="120" y="67" text-anchor="middle" fill="#8B0000" font-weight="700">VİTRİN</text>
+  <rect x="22" y="70" width="40" height="36" fill="url(#hatch)" stroke="#2a2318" stroke-width="1"/>
+  <text x="42" y="92" text-anchor="middle" font-size="9">WC</text>
+  <line x1="20" y1="80" x2="20" y2="96" stroke="#5a7aa8" stroke-width="3"/>
+  <rect x="220" y="20" width="80" height="88" fill="#e3ead8" stroke="#2a2318" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="260" y="62" text-anchor="middle" font-weight="700">AVLU</text>
+  <line x1="220" y1="44" x2="220" y2="66" stroke="#8B0000" stroke-width="4"/>
+  <text x="232" y="80" font-size="8.5" fill="#8B0000">arka kapı</text>
+  <line x1="300" y1="30" x2="300" y2="50" stroke="#efe6cf" stroke-width="4"/>
+  <text x="270" y="102" font-size="8">bahçe kapısı ↗</text>
+  <circle cx="346" cy="40" r="6" fill="#2a2318"/><text x="346" y="58" text-anchor="middle" font-size="7.5">K-5</text>
+  <path d="M340 40 L306 32 L306 50 Z" fill="#8B0000" opacity=".15"/>
+  <rect x="20" y="108" width="200" height="128" fill="#f6efdc" stroke="#2a2318" stroke-width="2.5"/>
+  <text x="120" y="160" text-anchor="middle" font-weight="700">ÖN SALON</text>
+  <line x1="150" y1="108" x2="178" y2="108" stroke="#f6efdc" stroke-width="4"/>
+  <text x="164" y="122" text-anchor="middle" font-size="8">iç kapı</text>
+  <rect x="34" y="176" width="66" height="18" fill="none" stroke="#2a2318" stroke-width="1.2"/>
+  <text x="67" y="189" text-anchor="middle" font-size="8.5">imza masası</text>
+  <rect x="160" y="186" width="48" height="18" fill="#d9ceb2" stroke="#2a2318" stroke-width="1.2"/>
+  <text x="184" y="199" text-anchor="middle" font-size="8.5">KASA</text>
+  <circle cx="212" cy="178" r="5" fill="#2a2318"/><text x="196" y="174" text-anchor="end" font-size="7.5">CAM-01</text>
+  <path d="M210 174 L150 112 L180 112 Z" fill="#8B0000" opacity=".12"/>
+  <line x1="100" y1="236" x2="140" y2="236" stroke="#f6efdc" stroke-width="4"/>
+  <text x="120" y="230" text-anchor="middle" font-size="8">ön kapı</text>
+  <circle cx="146" cy="226" r="5" fill="#2a2318"/><text x="156" y="229" font-size="7.5">CAM-02</text>
+</svg>`;
+
+/* ---------- VAKA MASASI ---------- */
+function openCase(id){
+  CUR = caseById(id); S = loadState(id);
+  if(S.done){ renderResult(); return; }
+  if(!S.start){ S.start = Date.now(); saveState(); }
+  $("caseEyebrow").textContent = `Vaka #${CUR.no} · ${LEVELS[CUR.zorluk].ad} · ${CUR.kategori}`;
+  $("caseTitle").textContent = CUR.baslik;
+  renderReport(); renderSuspects(); renderEvidence(); renderNotes(); updateStats();
+  show("case");
+  goTab(0, false);
+  clearInterval(timerInt);
+  timerInt = setInterval(() => { $("timer").textContent = fmt(elapsed()); }, 1000);
+  $("timer").textContent = fmt(elapsed());
+}
+function updateStats(){
+  $("hintStat").textContent = `${S.hints}/${CUR.ipuclari.length}`;
+  $("attemptStat").textContent = `${MAX_ATTEMPTS - S.attempts} hak`;
+}
+
+function renderReport(){
+  const r = CUR.rapor;
+  $("pReport").innerHTML = `
+    <p class="swipe-hint">← sekmeler arasında kaydırabilirsin →</p>
+    <div class="hook-box">${esc(CUR.giris)}</div>
+    <article class="paper card">
+      <div class="eyebrow">Olay Özeti · ${esc(CUR.tarih)}</div>
+      <h4>${esc(CUR.baslik)}</h4>
+      ${r.ozet.map(p => `<p>${esc(p)}</p>`).join("")}
+    </article>
+    <article class="paper card">
+      <div class="eyebrow">Olay Yeri Krokisi</div>
+      <h4>Eski Harf Sahafı</h4>
+      <div class="kroki">${KROKI}</div>
+      <ul class="numlist" style="margin-top:14px;font-size:14px">${r.mekan.map(m => `<li>${esc(m)}</li>`).join("")}</ul>
+    </article>
+    <article class="paper card">
+      <div class="eyebrow">Bilinen Zaman Çizelgesi</div>
+      <ul class="tl" style="margin-top:8px">${r.zamanCizelgesi.map(t => `<li><b>${esc(t.saat)}</b><span>${esc(t.olay)}</span></li>`).join("")}</ul>
+    </article>
+    <article class="paper card typed">
+      <div class="eyebrow">Polis Tutanağı · Olay Yeri Tespitleri</div>
+      <ul class="numlist" style="margin-top:12px">${r.tutanak.map(m => `<li>${esc(m)}</li>`).join("")}</ul>
+    </article>
+    <article class="paper card">
+      <div class="eyebrow">Mağdur İfadesi · Nevzat Ilgaz (68)</div>
+      <div style="margin-top:8px">${r.magdurIfadesi.map(q => `<div class="quote">“${esc(q)}”</div>`).join("")}</div>
+    </article>`;
+}
+
+function renderSuspects(){
+  const tones = ["#3b3328","#2f3640","#3d2c2c","#2d3a33","#352f3d"];
+  $("pSuspects").innerHTML = `<p class="swipe-hint">Her şüpheliyi işaretle: şüpheli mi, elendi mi?</p>` +
+    CUR.supheliler.map((p, i) => {
+      const m = S.marks[p.id] || "";
+      const initials = p.ad.split(" ").map(w => w[0]).join("");
+      return `<article class="paper suspect ${m==="elendi"?"is-elendi":""}" id="sus-${p.id}">
+        <div class="s-top">
+          <div class="mugshot" style="background:${tones[i%tones.length]}"><span class="tape"></span>${initials}<span class="tag">#${String(i+1).padStart(3,"0")}</span></div>
+          <div class="s-info">
+            <h4>${esc(p.ad)}, ${p.yas}</h4>
+            <div class="role">${esc(p.meslek)}</div>
+            <div class="rel">${esc(p.iliski)}</div>
+          </div>
+        </div>
+        <div class="alibi"><small>İddia / Alibi</small>“${esc(p.alibi)}”</div>
+        <details class="qa"><summary>Çapraz sorgu tutanağı</summary>
+          ${p.sorgu.map(q => `<div class="qa-item"><div class="q">S: ${esc(q.s)}</div><div class="a">C: “${esc(q.c)}”</div></div>`).join("")}
+        </details>
+        <div class="mark-row">
+          ${[["supheli","Şüpheli"],["belirsiz","Belirsiz"],["elendi","Elendi"]].map(([k,l]) =>
+            `<button class="mark m-${k} ${m===k?"on":""}" data-p="${p.id}" data-m="${k}">${l}</button>`).join("")}
+        </div>
+      </article>`;
+    }).join("");
+  $("pSuspects").querySelectorAll(".mark").forEach(b => b.onclick = () => {
+    const id = b.dataset.p, k = b.dataset.m;
+    S.marks[id] = S.marks[id] === k ? "" : k; saveState(); renderSuspects();
+  });
+}
+
+function evidenceBody(e){
+  if(e.tur === "kamera"){
+    return `<div class="cctv">${e.satirlar.map(r => `<div class="row"><span>${esc(r[0])}</span><span>${esc(r[1])}</span></div>`).join("")}</div>
+      ${e.not ? `<p class="ev-note">${esc(e.not)}</p>` : ""}`;
+  }
+  if(e.tur === "fis"){
+    return `<div class="receipt"><div class="rh">${esc(e.fisBaslik)}</div>
+      <div style="font-size:11px;color:#666;margin-bottom:6px">Kart sahibi: M. E*** · 06.11.2026</div>
+      ${e.satirlar.map(r => `<div class="rr"><span>${esc(r[0])}</span><span>${esc(r[1])}</span><span>${esc(r[2])}</span></div>`).join("")}
+      <div class="rf">${esc(e.fisNot)}</div></div>`;
+  }
+  if(e.tur === "foto"){
+    return `<div class="photo"><svg viewBox="0 0 320 200">
+        <rect width="320" height="200" fill="#2a2520"/>
+        <rect x="40" y="30" width="240" height="150" fill="#3b342c" stroke="#5a5046"/>
+        <rect x="70" y="48" width="180" height="114" fill="#6b4e2e"/>
+        <rect x="80" y="57" width="160" height="96" fill="#d8c79c"/>
+        <path d="M90 120 C120 90,150 140,180 100 S230 80,232 110 L232 145 L90 145Z" fill="#a8b98e" opacity=".55"/>
+        <path d="M95 80 Q160 60 225 85" stroke="#7a5a32" fill="none" stroke-width="1.2"/>
+        <circle cx="170" cy="105" r="9" fill="none" stroke="#8B0000" stroke-width="1"/>
+        <text x="160" y="72" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#5a3e1f">DERSAADET · 1876</text>
+        <rect x="40" y="30" width="240" height="150" fill="url(#glare)"/>
+        <defs><linearGradient id="glare" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".0"/><stop offset=".55" stop-color="#fff" stop-opacity=".12"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>
+        <text x="10" y="192" font-family="monospace" font-size="9" fill="#aaa">IMG_4471 · 20:52:14</text>
+      </svg></div>
+      <div class="exif">${e.meta.map(m => `<div><span>${esc(m[0])}</span><span>${esc(m[1])}</span></div>`).join("")}</div>
+      <div class="chat"><div class="who">Gönderilen mesaj → ${esc(e.mesaj.kime)}</div>
+        <div class="bubble">📷 Fotoğraf<br>${esc(e.mesaj.metin)}<small>${esc(e.mesaj.saat)} ✓✓</small></div></div>`;
+  }
+  if(e.tur === "rapor"){
+    return `<div class="docs">${e.belgeler.map(b => `<div class="paper typed"><h5>${esc(b.baslik)}</h5>${esc(b.metin)}</div>`).join("")}</div>`;
+  }
+  return "";
+}
+function renderEvidence(){
+  $("pEvidence").innerHTML = `<p class="swipe-hint">${CUR.kanitlar.length} kanıt · Önemli gördüğünü deftere ekle</p>` +
+    CUR.kanitlar.map(e => `<article class="ev">
+      <div class="ev-h"><span class="ev-code">${esc(e.kod)}</span><b>${esc(e.baslik)}</b></div>
+      <div class="ev-src">${esc(e.kaynak)}</div>
+      <div class="ev-body">${evidenceBody(e)}</div>
+      <div class="ev-foot"><button data-note="${e.id}">+ Deftere not al</button></div>
+    </article>`).join("");
+  $("pEvidence").querySelectorAll("[data-note]").forEach(b => b.onclick = () => {
+    const e = CUR.kanitlar.find(x => x.id === b.dataset.note);
+    S.notes = (S.notes ? S.notes.replace(/\s*$/,"") + "\n" : "") + `[${e.kod}] ${e.baslik}: `;
+    saveState(); renderNotes(); toast(`${e.kod} deftere eklendi`);
+  });
+}
+
+let confirmHint = false, confirmTimer = null;
+function renderNotes(){
+  const hs = CUR.ipuclari;
+  $("pNotes").innerHTML = `
+    <div class="paper notebook">
+      <div class="eyebrow" style="padding-left:28px;margin-bottom:6px">Dedektif Defteri</div>
+      <textarea id="notesArea" placeholder="Çelişkileri, saatleri, şüphelerini buraya yaz…">${esc(S.notes)}</textarea>
+      <div class="saved" id="savedTxt">Otomatik kaydediliyor</div>
+    </div>
+    <div class="section-h" style="margin-top:6px"><h3>İpuçları</h3><span class="eyebrow">Her ipucu −${HINT_PENALTY} puan</span></div>
+    ${hs.map((h, i) => {
+      if(i < S.hints) return `<div class="hint open"><span class="n">İPUCU ${i+1}</span><div class="body">${esc(h)}</div></div>`;
+      if(i === S.hints) return `<div class="hint"><span class="n">İPUCU ${i+1}</span><div class="body">
+        <button class="btn btn-ghost" id="hintBtn">${confirmHint ? "Emin misin? Tekrar dokun" : "İpucunu aç"}</button></div></div>`;
+      return `<div class="hint"><span class="n">İPUCU ${i+1}</span><div class="body lockedtxt">Önce önceki ipucunu aç.</div></div>`;
+    }).join("")}`;
+  const ta = $("notesArea");
+  ta.oninput = () => { S.notes = ta.value; saveState(); $("savedTxt").textContent = "Kaydedildi ✓"; };
+  const hb = $("hintBtn");
+  if(hb) hb.onclick = () => {
+    if(!confirmHint){ confirmHint = true; renderNotes(); clearTimeout(confirmTimer);
+      confirmTimer = setTimeout(() => { confirmHint = false; if(!$("case").classList.contains("hidden")) renderNotes(); }, 3500); return; }
+    confirmHint = false; clearTimeout(confirmTimer);
+    S.hints++; saveState(); renderNotes(); updateStats();
+  };
+}
+
+/* Sekmeler ve kaydırma */
+const panels = $("panels"), tabs = [...document.querySelectorAll(".tab")];
+function setTab(i){ tabs.forEach((t, k) => t.classList.toggle("on", k === i)); }
+function goTab(i, smooth = true){ panels.scrollTo({ left: i * panels.clientWidth, behavior: smooth ? "smooth" : "auto" }); setTab(i); }
+tabs.forEach(t => t.onclick = () => goTab(+t.dataset.i));
+let raf = null;
+panels.addEventListener("scroll", () => {
+  if(raf) return;
+  raf = requestAnimationFrame(() => { raf = null; setTab(Math.round(panels.scrollLeft / panels.clientWidth)); });
+});
+window.addEventListener("resize", () => { const i = tabs.findIndex(t => t.classList.contains("on")); goTab(Math.max(0,i), false); });
+
+$("backBtn").onclick = () => { clearInterval(timerInt); renderHome(); show("home"); };
+
+/* ---------- SUÇLAMA (3 adım) ---------- */
+let acc = null;
+$("solveBtn").onclick = () => { acc = { step: 0, supheli: null, kanit: null, motivasyon: null, verdict: null }; renderModal(); $("modal").classList.remove("hidden"); };
+$("modal").addEventListener("click", e => { if(e.target.id === "modal") closeModal(); });
+function closeModal(){ $("modal").classList.add("hidden"); }
+
+function renderModal(){
+  const steps = [
+    { key: "supheli", title: "Suçlu kim?", sub: "Tek bir isim seç. Hata yapma hakkın sınırlı.",
+      opts: CUR.supheliler.map(p => ({ id: p.id, t: p.ad, s: p.meslek })) },
+    { key: "kanit", title: "Hangi kanıt yalanı çürütüyor?", sub: "Seçtiğin kişinin ifadesindeki çelişkiyi kesin olarak ortaya koyan kanıt hangisi?",
+      opts: CUR.kanitlar.map(e => ({ id: e.id, t: `${e.kod} · ${e.baslik}`, s: e.kaynak })) },
+    { key: "motivasyon", title: "Neden yaptı?", sub: "Suçun arkasındaki asıl motivasyon.",
+      opts: CUR.suclama.motivasyonlar.map(m => ({ id: m.id, t: m.metin, s: m.aciklama })) }
+  ];
+  const st = steps[acc.step];
+  const left = MAX_ATTEMPTS - S.attempts;
+  $("sheet").innerHTML = `
+    <div class="eyebrow">Suçlama · Adım ${acc.step + 1}/3 · Kalan hak: ${left}</div>
+    <div class="steps">${steps.map((_, i) => `<i class="${i <= acc.step ? "on" : ""}"></i>`).join("")}</div>
+    <h3>${st.title}</h3><p class="sub">${st.sub}</p>
+    <div class="opts">${st.opts.map(o => `<button class="opt ${acc[st.key] === o.id ? "on" : ""}" data-id="${o.id}">
+      <span class="dot"></span><span><b>${esc(o.t)}</b><small>${esc(o.s)}</small></span></button>`).join("")}</div>
+    ${acc.verdict ? `<div class="verdict">${acc.verdict}</div>` : ""}
+    <div class="nav">
+      <button class="btn btn-ghost" id="mBack">${acc.step === 0 ? "Vazgeç" : "← Geri"}</button>
+      <button class="btn ${acc.step === 2 ? "btn-blood" : "btn-gold"}" id="mNext" ${acc[st.key] ? "" : "disabled"}>${acc.step === 2 ? "⚖ Suçla" : "İleri →"}</button>
+    </div>`;
+  $("sheet").querySelectorAll(".opt").forEach(b => b.onclick = () => { acc[st.key] = b.dataset.id; acc.verdict = null; renderModal(); });
+  $("mBack").onclick = () => { if(acc.step === 0) closeModal(); else { acc.step--; renderModal(); } };
+  $("mNext").onclick = () => { if(acc.step < 2){ acc.step++; renderModal(); } else submitAccusation(); };
+}
+
+function submitAccusation(){
+  const d = CUR.suclama.dogru;
+  const parts = [acc.supheli === d.supheli, acc.kanit === d.kanit, acc.motivasyon === d.motivasyon];
+  const ok = parts.filter(Boolean).length;
+  S.attempts++; S.correctParts += ok; S.totalParts += 3;
+  if(ok === 3 || S.attempts >= MAX_ATTEMPTS){
+    finish(ok === 3); return;
+  }
+  saveState(); updateStats();
+  acc.step = 0;
+  acc.verdict = `<b>Savcılık dosyayı geri çevirdi.</b><br>Suçlamanın 3 noktasından <b>${ok}</b> tanesi tutuyor. Hangisinin yanlış olduğunu bulmak sana kalmış. Kalan hak: <b>${MAX_ATTEMPTS - S.attempts}</b>`;
+  renderModal();
+}
+
+function computeRank(solved, time){
+  if(!solved) return { ad: "Stajyer", puan: 0 };
+  let p = 100 - S.hints * HINT_PENALTY - (S.attempts - 1) * 25;
+  const min = time / 60; if(min > 10) p -= Math.min(20, Math.floor(min - 10));
+  p = Math.max(5, p);
+  const ad = p >= 90 ? "Sherlock" : p >= 75 ? "Başkomiser" : p >= 55 ? "Dedektif" : "Çaylak";
+  return { ad, puan: p };
+}
+
+function finish(solved){
+  const time = (Date.now() - S.start) / 1000;
+  const r = computeRank(solved, time);
+  S.done = { solved, time, rank: r.ad, puan: r.puan, accuracy: Math.round(100 * S.correctParts / S.totalParts) };
+  saveState(); clearInterval(timerInt); closeModal(); renderResult();
+}
+
+/* ---------- SONUÇ ---------- */
+function shareText(){
+  const d = S.done, url = SITE_URL || location.href.split("#")[0];
+  const head = d.solved ? `🕵️‍♂️ Günün Vakası #${CUR.no} çözüldü!` : `🕵️‍♂️ Günün Vakası #${CUR.no} bu sefer beni yendi.`;
+  return `${head}\n⏱️ Süre: ${fmt(d.time)} | 🔍 İpucu: ${S.hints}/${CUR.ipuclari.length} | 🏆 Rütbe: ${d.rank}\nGerçeği görebilecek misin? ${url}`;
+}
+function renderResult(){
+  const d = S.done, c = CUR.cozum, txt = shareText();
+  $("result").innerHTML = `
+    <article class="paper">
+      <div class="ribbon"></div>
+      <div class="eyebrow">Vaka #${CUR.no} · ${esc(CUR.baslik)}</div>
+      <div style="margin-top:18px"><span class="stamp" style="font-size:22px">${d.solved ? "Çözüldü" : "Dosya Kapandı"}</span></div>
+      <h2>${d.solved ? "Gerçeği buldun." : "Bu sefer suçlu kaçtı."}</h2>
+      <p style="color:var(--ink-soft);font-size:14px">${d.solved ? "Savcılık suçlamanı kabul etti." : "Suçlama hakların doldu. Çözüm dosyası aşağıda."}</p>
+      <div class="grid4">
+        <div><small>Çözüm süresi</small><b>${fmt(d.time)}</b></div>
+        <div><small>İpucu</small><b>${S.hints}/${CUR.ipuclari.length}</b></div>
+        <div><small>Doğruluk</small><b>%${d.accuracy}</b></div>
+        <div><small>Deneme</small><b>${S.attempts}/${MAX_ATTEMPTS}</b></div>
+      </div>
+      <div class="eyebrow" style="margin-top:14px">Kazandığın rütbe</div>
+      <div class="rank">${d.rank}</div>
+    </article>
+
+    <div class="sharebox" id="shareTxt">${esc(txt)}</div>
+    <div class="share-actions">
+      <a class="btn x-btn" href="https://x.com/intent/post?text=${encodeURIComponent(txt)}" target="_blank" rel="noopener">𝕏'te Paylaş</a>
+      <button class="btn btn-ghost" id="copyBtn">Metni Kopyala</button>
+    </div>
+
+    <details class="solution">
+      <summary>📁 Çözüm Dosyasını Aç <span>+</span></summary>
+      <div class="paper">
+        <h5>Sonuç</h5><p>${esc(c.ozet)}</p>
+        <h5>Gerçekte ne oldu?</h5>${c.hikaye.map(p => `<p style="margin-top:8px">${esc(p)}</p>`).join("")}
+        <h5>Diğerleri neden suçsuz?</h5>${c.eleme.map(e => `<p style="margin-top:8px"><b>${esc(e.ad)}:</b> ${esc(e.metin)}</p>`).join("")}
+        <h5>Yanıltmacalar</h5><ul style="padding-left:18px">${c.yaniltmacalar.map(y => `<li style="margin-top:6px">${esc(y)}</li>`).join("")}</ul>
+      </div>
+    </details>
+
+    <div style="display:grid;gap:10px;margin-top:18px">
+      <button class="btn btn-gold" id="homeBtn">Ana Sayfaya Dön</button>
+      <button class="btn btn-ghost" id="resetBtn" style="font-size:13px">Bu vakayı sıfırla (test için)</button>
+    </div>`;
+  show("result");
+  $("copyBtn").onclick = async () => {
+    try{ await navigator.clipboard.writeText(txt); toast("Kopyalandı"); }
+    catch(e){ const r = document.createRange(); r.selectNodeContents($("shareTxt")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast("Metni seçtim, kopyalayabilirsin"); }
+  };
+  $("homeBtn").onclick = () => { renderHome(); show("home"); };
+  $("resetBtn").onclick = () => { store.set("gd_" + CUR.id, freshState()); renderHome(); show("home"); toast("Vaka sıfırlandı"); };
+}
+
+/* ---------- Başlat ---------- */
+renderHome(); show("home");
+})();
+</script>
+</body>
+</html>
